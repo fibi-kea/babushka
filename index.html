@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bistro Babushka</title>
+
+    <style>
+        .data-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 20px;
+        }
+
+
+        .data-template {}
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="" alt="">
+    </header>
+    <nav>
+        <button class="menu-item" data-catagory="alle">Alle</button>
+        <button class="menu-item" data-catagory="forretter">Forretter</button>
+        <button class="menu-item" data-catagory="hovedretter">Hovedretter</button>
+        <button class="menu-item" data-catagory="desserter">Desserter</button>
+        <button class="menu-item" data-catagory="drikkevarer">Drikkevarer</button>
+        <button class="menu-item" data-catagory="sideorders">Sideorders</button>
+    </nav>
+    <main>
+        <h1 id="overskrift" data-overskrift>Menu</h1>
+        <section class="data-container">
+            <template class="data-template">
+        <article class="retter">
+            <img src="" alt="">
+            <h2></h2>
+            <p class="kortbeskrivelse"></p>
+            <p>Pris: <span class="pris"></span>,-</p>
+        </article>
+    </template>
+
+        </section>
+    </main>
+
+
+    <footer>
+        <section><address>Addresse: <br>Grønnegade 97<br>1234 København K </address>
+            <aside>Åbningstider: <br> Mandag – fredag 10:30 – 22:00<br>Lørdag 12:00 – 23:00</aside>
+        </section>
+    </footer>
+
+
+
+    <script>
+        let dest = document.querySelector(".data-container"),
+            retter,
+            menuFilter = "alle";
+
+        document.addEventListener("DOMContentLoaded", hentJson);
+
+        async function hentJson() {
+            let myJson = await fetch("menu.json");
+            retter = await myJson.json();
+
+            console.log(retter[0].navn);
+
+            visRetter();
+        }
+
+
+        document.querySelectorAll(".menu-item").forEach(knap => {
+            knap.addEventListener("click", filtrering);
+        });
+
+        function filtrering() {
+            dest.textContent = "";
+            menuFilter = this.getAttribute("data-catagory");
+            visRetter();
+        }
+
+
+
+        function visRetter() {
+            let modtager = document.querySelector(".data-container");
+            let temp = document.querySelector(".data-template");
+
+            //løb personlisten igennem og lav en klon
+            retter.forEach(retter => {
+
+                if (retter.catagory == menuFilter || menuFilter == "alle") {
+
+
+                    //Lav en klon af template
+                    let klon = temp.cloneNode(true).content;
+
+                    //indsæt data i html
+                    klon.querySelector("img").src = "imgs/small/" + retter.billede + "-sm.jpg";
+                    klon.querySelector("h2").textContent = retter.navn;
+                    klon.querySelector(".kortbeskrivelse").textContent = retter.kortbeskrivelse;
+                    klon.querySelector(".pris").textContent = retter.pris;
+
+
+                    //placer klon i html
+                    modtager.appendChild(klon);
+                }
+            })
+        }
+
+
+        //Filter funktion
+        function filtrering() {
+            dest.textContent = "";
+            madFilter = this.getAttribute("data-kategori");
+            visRetter();
+        }
+
+    </script>
+</body>
+
+</html>
